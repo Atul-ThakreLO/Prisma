@@ -1,0 +1,128 @@
+
+async function createStudent(studentData) {
+  try {
+    const student = await prisma.student.create({
+      data: studentData,
+    });
+    return student;
+  } catch (err) {
+    console.log(err);
+  } finally {
+    await prisma.$disconnect();
+  }
+}
+
+// createStudent({
+//   email: "abc@abc.com",
+//   password: "1234",
+// }).then((student) => {
+//     console.log(student);
+// })
+
+async function getStudents() {
+  try {
+    const students = await prisma.student.findMany();
+    return students;
+  } catch (err) {
+    console.log(err);
+  } finally {
+    await prisma.$disconnect();
+  }
+}
+
+// getStudents().then((st) => console.log(st));
+
+async function getStudentById(id) {
+  try {
+    const student = await prisma.student.findUnique({
+      where: id,
+      include: {
+        studentInfo: true,
+      }
+    });
+    return student;
+  } catch (err) {
+    console.log(err);
+  } finally {
+    await prisma.$disconnect();
+  }
+}
+
+// getStudentById({student_id: "b45caaeb-cddf-4be6-b55a-36d2934813cd"}).then((st) => console.log(st));
+
+async function createClass(name) {
+  try {
+    const classData = await prisma.class.create({
+      data: name,
+    });
+    return classData;
+  } catch (err) {
+    console.log(err);
+  } finally {
+    await prisma.$disconnect();
+  }
+}
+
+// createClass({
+//   class_name: "12th",
+// }).then((cl) => console.log(cl));
+
+async function createSchool(name) {
+  try {
+    const schoolData = await prisma.school.create({
+      data: name,
+    });
+    return schoolData;
+  } catch (err) {
+    console.log(err);
+  } finally {
+    await prisma.$disconnect();
+  }
+}
+
+// createSchool({
+//   school_name: "Ashok Vidyalaya",
+// }).then((sc) => console.log(sc));
+
+async function studentInfo(studentData) {
+  try {
+    const student = await prisma.studentInfo.create({
+      data: studentData,
+    });
+    return student;
+  } catch (err) {
+    console.log(err);
+  } finally {
+    await prisma.$disconnect();
+  }
+}
+
+// studentInfo({
+//   student_name: "John Doe",
+//   mobile: "1234567890",
+//   student_id: "b45caaeb-cddf-4be6-b55a-36d2934813cd",
+//   class_id: "649f7ac4-76ef-4dd7-b588-4d708f6d08a4",
+//   school_id: "aa3daa12-211b-467b-9efc-e8c5301dc560"
+// }).then((st) => console.log(st));
+
+async function getStudentsInfo(id) {
+  try {
+    const students = await prisma.studentInfo.findUnique({
+      where: id,
+      include: {
+        student: true,
+        class: true,
+        school: true,
+      }
+    });
+    return students;
+  } catch (err) {
+    console.log(err);
+  } finally {
+    await prisma.$disconnect();
+  }
+}
+
+
+getStudentsInfo({student_id: "b45caaeb-cddf-4be6-b55a-36d2934813cd"}).then((st) => console.log(st.student));
+

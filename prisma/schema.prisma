@@ -18,3 +18,108 @@ model User {
   email String  @unique
   name  String?
 }
+
+model Class {
+  class_id        String            @id @default(uuid())
+  class_name      String
+  StudentInfo     StudentInfo[]
+  StudentFeesPaid StudentFeesPaid[]
+  Subjects        Subjects[]
+}
+
+model School {
+  school_id       String            @id @default(uuid())
+  school_name     String
+  studentsInfo    StudentInfo[]
+  StudentFeesPaid StudentFeesPaid[]
+}
+
+model Subjects {
+  subject_id      String            @id @default(uuid())
+  subject_name    String
+  class_id        String
+  class           Class             @relation(fields: [class_id], references: [class_id])
+  StudentSubjects StudentSubjects[]
+  notes           Notes[]
+  papers          Papers[]
+  TestPaper       TestPaper[]
+}
+
+model Student {
+  student_id      String            @id @default(uuid())
+  email           String            @unique
+  password        String
+  StudentInfo     StudentInfo?
+  StudentFeesPaid StudentFeesPaid[]
+  StudentSubjects StudentSubjects[]
+  TestPaperStudents TestPaperStudents[]
+}
+
+model StudentInfo {
+  id           String  @id @default(uuid())
+  student_name String
+  mobile       String
+  student_id   String  @unique
+  student      Student @relation(fields: [student_id], references: [student_id])
+  class_id     String
+  class        Class   @relation(fields: [class_id], references: [class_id])
+  school_id    String
+  school       School  @relation(fields: [school_id], references: [school_id])
+}
+
+model StudentFeesPaid {
+  id         String   @id @default(uuid())
+  student_id String
+  student    Student  @relation(fields: [student_id], references: [student_id])
+  class_id   String
+  class      Class    @relation(fields: [class_id], references: [class_id])
+  school_id  String
+  school     School   @relation(fields: [school_id], references: [school_id])
+  amount     Decimal
+  date       DateTime @default(now())
+}
+
+model StudentSubjects {
+  student_id String
+  student    Student  @relation(fields: [student_id], references: [student_id])
+  subject_id String
+  subject    Subjects @relation(fields: [subject_id], references: [subject_id])
+
+  @@id([student_id, subject_id])
+  @@unique([student_id, subject_id])
+}
+
+
+model Notes {
+  id String @id @default(uuid())
+  title String
+  url String
+  subject_id String
+  subject Subjects @relation(fields: [subject_id], references: [subject_id])
+}
+
+model Papers {
+  id String @id @default(uuid())
+  title String
+  url String
+  subject_id String
+  subject Subjects @relation(fields: [subject_id], references: [subject_id])
+}
+
+model TestPaper {
+  id String @id @default(uuid())
+  title String
+  subject_id String
+  subject Subjects @relation(fields: [subject_id], references: [subject_id])
+  TestPaperStudents TestPaperStudents[] @relation("TestPaperStudents")
+}
+
+model TestPaperStudents {
+  student_id String
+  student    Student  @relation(fields: [student_id], references: [student_id])
+  test_paper_id String
+  test_paper TestPaper @relation(name: "TestPaperStudents", fields: [test_paper_id], references: [id])
+  marks Decimal
+
+  @@id([student_id, test_paper_id])
+}
